@@ -1,0 +1,47 @@
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+**/.env.local
+src/.env.local
+
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Build / cache
+*.tsbuildinfo
+.turbo/
+
+# Logs
+*.log
+*_err.log
+*_out.log
+dev.log
+dev_*.log
+build_error.txt
+build_output.txt
+next_output.txt
+success.log
+yarn.log
+
+# Archives / accidental downloads in repo root
+*.rar
+*.tgz
+*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Local runtime DB / send state (recreated as needed)
+data/app.db
+data/app.db-*
+data/*.db
+data/send-limits.json

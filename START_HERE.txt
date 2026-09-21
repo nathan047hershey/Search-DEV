@@ -1,0 +1,41 @@
+========================================
+  Search Dev GitHub - Run on any PC
+========================================
+
+RECOMMENDED (fewest problems)
+  Use the app ON THE SAME PC where you unzipped it.
+  1. setup.bat   (first time only)
+  2. run.bat
+  3. Browser: http://localhost:3000
+
+  Do NOT try Network / 169.254 / Tailscale IPs unless you need them.
+  Those are the #1 source of "cannot open" errors.
+
+FROM ANOTHER PC (optional)
+  1. Host: run.bat must stay open
+  2. Host: share.bat
+  3. Other PC: open the https://....trycloudflare.com link
+  Login may be flaky over a share link — prefer localhost for sending email.
+
+STOP / CACHE
+  stop.bat          stop the server
+  clear-cache.bat   delete .next (frees disk; safe)
+
+REQUIREMENTS
+  - Windows 10/11
+  - Node.js 20+ LTS  https://nodejs.org
+  - Internet for GitHub search / Resend / Minimax
+
+COMMON PROBLEMS
+  - Port 3000 in use          -> stop.bat, then run.bat
+  - Network shows 169.254...  -> no real Wi-Fi; use localhost or share.bat
+  - Bad Gateway on IP         -> firewall / wrong network; use share.bat
+  - .next folder huge         -> clear-cache.bat
+  - Filters need Search click -> already auto-search in latest zip
+  - npm install sqlite fail   -> VS C++ Build Tools, then setup.bat
+
+INCLUDED IN ZIP
+  .env.local, data\app.db, templates, bat files, source
+  NOT included: node_modules, .next (recreated automatically)
+
+Keep this zip private (.env.local has API keys).
