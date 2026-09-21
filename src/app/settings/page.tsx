@@ -34,10 +34,14 @@ export default function SettingsPage() {
   const [envKeys, setEnvKeys] = useState<EnvKeyStatus[]>([]);
   const [envRequiredMissing, setEnvRequiredMissing] = useState(0);
   const [envError, setEnvError] = useState<string | null>(null);
+  const [tokenList, setTokenList] = useState<string[]>([]);
+  const [tokenInput, setTokenInput] = useState("");
+  const [tokenStatus, setTokenStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
     fetchEmailSettings();
     fetchEnvStatus();
+    fetchTokenList();
   }, []);
 
   const fetchEnvStatus = async () => {
@@ -73,6 +77,18 @@ export default function SettingsPage() {
       console.error("Failed to fetch email settings:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchTokenList = async () => {
+    try {
+      const res = await fetch("/api/settings/tokens");
+      const data = await res.json();
+      if (res.ok) {
+        setTokenList(data.tokens || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch token list:", error);
     }
   };
 
@@ -139,6 +155,59 @@ export default function SettingsPage() {
       }
     } catch (error) {
       setStatus({ type: "error", message: "Failed to delete settings" });
+    }
+  };
+
+  const handleTokenAdd = async () => {
+    const value = tokenInput.trim();
+    if (!value) {
+      setTokenStatus({ type: "error", message: "Please enter a GitHub token" });
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/settings/tokens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "add", token: value }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to add token");
+      }
+
+      setTokenInput("");
+      setTokenStatus({ type: "success", message: "GitHub token added to runtime environment" });
+      await fetchTokenList();
+    } catch (error) {
+      setTokenStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Unable to add token",
+      });
+    }
+  };
+
+  const handleTokenRemove = async (token: string) => {
+    try {
+      const res = await fetch("/api/settings/tokens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "remove", token }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to remove token");
+      }
+
+      setTokenStatus({ type: "success", message: "GitHub token removed" });
+      setTokenList((current) => current.filter((item) => item !== token));
+    } catch (error) {
+      setTokenStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Unable to remove token",
+      });
     }
   };
 
@@ -211,6 +280,58 @@ export default function SettingsPage() {
               </ul>
             </>
           )}
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="mb-6 flex items-center gap-3">
+            <KeyRound className="h-6 w-6 text-blue-600" />
+            <h1 className="text-2xl font-bold text-gray-900">API Keys</h1>
+          </div>
+
+          {tokenStatus && (
+            <div className={`mb-4 flex items-center gap-2 rounded-lg px-4 py-3 ${tokenStatus.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+              {tokenStatus.type === "success" ? <Check className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+              <span>{tokenStatus.message}</span>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                type="password"
+                value={tokenInput}
+                onChange={(e) => setTokenInput(e.target.value)}
+                placeholder="Paste a GitHub token"
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleTokenAdd}
+                className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+              >
+                Add token
+              </button>
+            </div>
+            {tokenList.length === 0 ? (
+              <p className="text-sm text-gray-500">No GitHub tokens configured yet.</p>
+            ) : (
+              <ul className="space-y-2">
+                {tokenList.map((token) => (
+                  <li key={token} className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 px-3 py-2">
+                    <span className="truncate font-mono text-xs text-gray-700">{token}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleTokenRemove(token)}
+                      className="inline-flex items-center gap-1 rounded bg-red-50 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         <div className="rounded-lg bg-white p-6 shadow-sm">

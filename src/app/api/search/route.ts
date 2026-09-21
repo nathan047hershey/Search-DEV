@@ -17,7 +17,7 @@ import {
 } from "@/lib/search-query";
 import validator from "email-validator";
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 const SEARCH_CACHE_TTL_MS = 3 * 60 * 1000;
 const searchCache = new Map<

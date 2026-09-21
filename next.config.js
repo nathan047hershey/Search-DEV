@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ["better-sqlite3"],
   // Next 16 blocks /_next/* from “other” hosts in dev (shows as 403/404 in the
   // browser and the search UI never hydrates). Allow local + share.bat tunnels.
   allowedDevOrigins: [

@@ -2,7 +2,11 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
-const DB_PATH = process.env.SQLITE_DB_PATH || path.join(process.cwd(), "data", "app.db");
+const DB_PATH =
+  process.env.SQLITE_DB_PATH ||
+  (process.env.VERCEL
+    ? path.join("/tmp", "app.db")
+    : path.join(process.cwd(), "data", "app.db"));
 
 type AnyDb = any;
 
