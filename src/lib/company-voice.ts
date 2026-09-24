@@ -204,6 +204,65 @@ export function pickFollowupSubject(roleTitle: string, seed = "default"): string
   return options[hashSeed(seed + ":fusubj") % options.length];
 }
 
+/** Collaboration / project partnership intros */
+export const COLLAB_INTRO_POOL = [
+  (repo: string, name: string) =>
+    `I came across your ${repo} work and thought it could be a good fit for something we're building at ${COMPANY.name}.`,
+  (repo: string, name: string) =>
+    `Saw your ${repo} project — we use similar patterns at ${COMPANY.name} and thought there might be room to collaborate.`,
+  (repo: string, name: string) =>
+    `Your ${repo} work caught our eye. We're always looking for strong contributors to partner with on open source.`,
+  (repo: string, name: string) =>
+    `I've been following your ${repo} project. ${COMPANY.name} uses related tech — interested in discussing a collaboration?`,
+  (repo: string, name: string) =>
+    `Nice work on ${repo}. We have a related project at ${COMPANY.name} and think a partnership could be valuable.`,
+  (repo: string, name: string) =>
+    `Your ${repo} work looks solid. We're open-source focused here and thought you might be interested in collaborating.`,
+  (repo: string, name: string) =>
+    `We use similar approaches in ${COMPANY.name}'s stack. Your ${repo} project seemed worth reaching out about.`,
+  (repo: string, name: string) =>
+    `Quick note — liked what I saw in ${repo}. We have some open source work that might overlap with your interests.`,
+];
+
+export function pickCollabIntro(repo: string, name: string, seed = "default"): string {
+  const fn = COLLAB_INTRO_POOL[hashSeed(seed + ":collab") % COLLAB_INTRO_POOL.length];
+  return fn(repo, name);
+}
+
+export const COLLAB_SUBJECT_POOL = [
+  (repo: string) => `Collaboration opportunity: ${repo}`,
+  (repo: string) => `Open source partnership - ${repo}`,
+  (repo: string) => `Saw your ${repo} work`,
+  (repo: string) => `Possible collaboration on ${repo}?`,
+  (repo: string) => `${repo} — partnership idea`,
+  (repo: string) => `From ${COMPANY.name} · ${repo} collaboration`,
+  (repo: string) => `${repo} — worth a conversation?`,
+  (repo: string) => `${repo} at ${COMPANY.name}`,
+];
+
+export function pickCollabSubject(repo: string, seed = "default"): string {
+  const fn = COLLAB_SUBJECT_POOL[hashSeed(seed + ":collabsubj") % COLLAB_SUBJECT_POOL.length];
+  return fn(repo);
+}
+
+export const COLLAB_CTA_POOL = [
+  (repo: string) =>
+    `If you're open to it, let's chat about potential collaboration on ${repo}. Reply here or ${COMPANY.careersEmail}.`,
+  (repo: string) =>
+    `Interested in discussing a partnership on ${repo} or related work? Reach out at ${COMPANY.careersEmail}.`,
+  (repo: string) =>
+    `Open to exploring what we could build together. ${COMPANY.careersEmail} is the best place to connect.`,
+  (repo: string) =>
+    `Would love to hear your thoughts on potential collaboration. Reply here or email ${COMPANY.careersEmail}.`,
+  (repo: string) =>
+    `Let me know if ${repo} collaboration makes sense. Happy to jump on a call. ${COMPANY.careersEmail}.`,
+];
+
+export function pickCollabCta(repo: string, seed = "default"): string {
+  const fn = COLLAB_CTA_POOL[hashSeed(seed + ":collabcta") % COLLAB_CTA_POOL.length];
+  return fn(repo);
+}
+
 /** Templates that read as serious recruiting mail (used by Auto). */
 export const PROFESSIONAL_TEMPLATE_IDS = [
   "outlook-safe",

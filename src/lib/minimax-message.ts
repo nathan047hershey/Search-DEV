@@ -53,6 +53,9 @@ import {
   pickFollowupSubject,
   pickOfferBullets,
   pickPersonalizedSubject,
+  pickCollabIntro,
+  pickCollabSubject,
+  pickCollabCta,
 } from "./company-voice";
 
 export type { DevTrack, MessageStyle, EmailLayoutId };
@@ -790,6 +793,11 @@ function defaultOpening(
     return humanizeOpening(warm[h % warm.length]);
   }
 
+  if (style === "collab") {
+    const repoName = featuredRepo || dev.login || "your project";
+    return pickCollabIntro(repoName, dev.name || dev.login || "there", seed);
+  }
+
   const openings = [
     `I'm Faber with PivotalStacks Careers. We're hiring a ${role}, and ${signal} looked close enough that I wanted to share a clear brief.`,
     `Quick note from Faber (PivotalStacks Careers) about our ${role} opening - ${bridge}`,
@@ -897,13 +905,15 @@ function buildPersonalizationFromTrack(
   const signals = extractOpeningSignals(dev);
   const subject =
     overrides?.subject ||
-    (followup
-      ? pickFollowupSubject(pack.roleTitle, layoutSeed)
-      : pickPersonalizedSubject(pack.roleTitle, layoutSeed, {
-          language: language || undefined,
-          company: signals.company || undefined,
-          repo: signals.featuredRepo || undefined,
-        }));
+    (style === "collab"
+      ? pickCollabSubject(signals.featuredRepo || dev.login, layoutSeed)
+      : followup
+        ? pickFollowupSubject(pack.roleTitle, layoutSeed)
+        : pickPersonalizedSubject(pack.roleTitle, layoutSeed, {
+            language: language || undefined,
+            company: signals.company || undefined,
+            repo: signals.featuredRepo || undefined,
+          }));
 
   const roleBlurb = leanFollowup
     ? ""
@@ -941,9 +951,11 @@ function buildPersonalizationFromTrack(
     whyUs,
     closingLine:
       overrides?.closingLine ||
-      (followup
-        ? pickFollowupCta(overrides?.roleTitle || pack.roleTitle, layoutSeed)
-        : pickCta(overrides?.roleTitle || pack.roleTitle, layoutSeed)),
+      (style === "collab"
+        ? pickCollabCta(signals.featuredRepo || dev.login, layoutSeed)
+        : followup
+          ? pickFollowupCta(overrides?.roleTitle || pack.roleTitle, layoutSeed)
+          : pickCta(overrides?.roleTitle || pack.roleTitle, layoutSeed)),
     processNote: overrides?.processNote || COMPANY.process,
     companyNote: overrides?.companyNote || COMPANY.about,
     trackLabel: overrides?.trackLabel || pack.label,

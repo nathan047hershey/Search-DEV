@@ -45,7 +45,8 @@ export type MessageStyle =
   | "peer"
   | "followup"
   | "followup-value"
-  | "followup-close";
+  | "followup-close"
+  | "collab";
 
 export interface TrackPack {
   label: string;
@@ -125,6 +126,11 @@ export const MESSAGE_STYLES: Array<{
     id: "formal",
     label: "Formal",
     description: "More corporate letter tone",
+  },
+  {
+    id: "collab",
+    label: "Collaborate",
+    description: "Open source contribution or project partnership",
   },
 ];
 
@@ -1145,6 +1151,9 @@ export function styleOpeningHint(style: MessageStyle): string {
   }
   if (style === "formal") {
     return `${trust} Formal letter English. Complete sentences. No marketing adjectives.`;
+  }
+  if (style === "collab") {
+    return `${trust} COLLABORATION note. Interest in their open source work or project. Name what you admire in their repos. No job pitch. One clear ask.`;
   }
   return `${trust} Clear, specific, restrained.`;
 }
