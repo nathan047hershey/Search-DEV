@@ -83,13 +83,7 @@ if (who.status !== 0) {
 console.log("Logged in as:", (who.stdout || "").trim());
 
 console.log("Linking / deploying project…");
-vercel([
-  "deploy",
-  "--prod",
-  "--yes",
-  "--name",
-  "search-dev-github",
-]);
+vercel(["deploy", "--prod", "--yes"]);
 
 const local = parseEnvLocal(path.join(root, ".env.local"));
 const setKeys = [];

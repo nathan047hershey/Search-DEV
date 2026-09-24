@@ -118,6 +118,8 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.id as string;
+        // Note: accessToken is only available via GitHub OAuth, not credentials auth.
+        // For credentials auth, the global GITHUB_TOKEN env var is used as fallback.
       }
       return session;
     },
